@@ -11,12 +11,15 @@ const int out = A0;
 //Declarations
 
 enum Estado {
-  lect_raw, procesado, error, pantalla, serial};
+  lect_raw, procesado, error, serial};
 Estado state = lect_raw;
 
 float color[]= {
   0,0,0,0};//R,G,C,B
 unsigned long duracion = 0;
+enum tipoc {
+  Rojo, Azul, Verde, Blanco, Negro, Amarillo, Naranja};
+tipoc subtipo = Blanco;
 
 void setup(){
   //Pins setup 
@@ -65,12 +68,48 @@ void loop(){
 
     break;
   case procesado:
-  
-    state = pantalla;
-    break;
-  case pantalla:
+    if(color[2] < 1600){
+      subtipo = Negro;
+    }
+    else if((color[2] >= 1600)&& (color[2] < 7183)){
+      if(color[2] <= 4300){
+        if((color[0]/color[2]) > 0.6){
+          subtipo = Rojo;
+        }
+        else{
+          subtipo = Verde;
+        }
+      }
+      else if(color[2] <= 5609){
+          
+          if(color[0] >= 0.50){
+            subtipo = Naranja;
+          }
+          else if(color[3] > 0.37){
+            subtipo = Verde;
+          }
+          else{
+            subtipo = Azul;
+          }
+      }
+      else{
+        subtipo = Azul;
+      }
+        
+    }
+    else{
+
+      if(color[2] < 9800 ){
+        subtipo = Amarillo;
+      }
+      else{
+        subtipo = Blanco;
+      }
+      
+    }
     state = serial;
     break;
+    
   case serial:
   
     Serial.print("Frecuencia fotodiodo rojo en HZ:");
@@ -81,8 +120,19 @@ void loop(){
     Serial.println(color[2],DEC);
     Serial.print("Frecuencia fotodiodo green en Hz:");
     Serial.println(color[3], DEC);
+    Serial.print("Pertenece a la gama de color: ");
+    Serial.println(subtipo);
+    /*Leyenda:
+     * 0 Rojo
+     * 1 Azul
+     * 2 Verde
+     * 3 Blanco
+     * 4 Negro
+     * 5 Amarillo
+     * 6 Naranja
+    */
     Serial.println();
-    delay(5000);
+    delay(2000);
     state = lect_raw;
     break;
   case error:
