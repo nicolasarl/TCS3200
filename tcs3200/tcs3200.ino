@@ -1,3 +1,9 @@
+#include <LiquidCrystal.h>
+
+//inicializamos la librería
+
+LiquidCrystal lcd(43,42,44,45,46,47); //(Reset, enable, datos 4-7)
+
 //Frequency control
 const int s0 = 50;
 const int s1 = 51;
@@ -6,7 +12,6 @@ const int s2 = 52;
 const int s3 = 53;
 
 const int out = A0;
-
 
 //Declarations
 
@@ -22,6 +27,9 @@ enum tipoc {
 tipoc subtipo = Blanco;
 
 void setup(){
+
+  //LCD
+  lcd.begin(16,2);
   //Pins setup 
   pinMode(s0, OUTPUT);
   pinMode(s1, OUTPUT);
@@ -111,7 +119,7 @@ void loop(){
     break;
     
   case serial:
-  
+    
     Serial.print("Frecuencia fotodiodo rojo en HZ:");
     Serial.println(color[0],DEC);
     Serial.print("Frecuencia fotodiodo blue en Hz:");
@@ -122,6 +130,28 @@ void loop(){
     Serial.println(color[3], DEC);
     Serial.print("Pertenece a la gama de color: ");
     Serial.println(subtipo);
+    //Imprimimos por la pantalla lcd
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("R");
+    lcd.setCursor(1,0);
+    lcd.print(String(int(color[0])));
+    lcd.setCursor(5,0);
+    lcd.print("G");
+    lcd.setCursor(6,0);
+    lcd.print(String(int(color[1])));
+    lcd.setCursor(10,0);
+    lcd.print("G");
+    lcd.setCursor(11,0);
+    lcd.print(String(int(color[1])));
+   /* lcd.setCursor(4,0);
+    lcd.print("G:");
+    lcd.setCursor(7,0);
+    lcd.print(String(int((color[1]*100)/color[3])));
+    lcd.setCursor(8,0);
+    lcd.print("B:");
+    lcd.setCursor(11,0);
+    lcd.print(String(int((color[2]*100)/color[3])));*/
     /*Leyenda:
      * 0 Rojo
      * 1 Azul
@@ -131,6 +161,42 @@ void loop(){
      * 5 Amarillo
      * 6 Naranja
     */
+
+    switch(subtipo){
+      case Rojo:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Rojo");
+        break;
+      case Azul:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Azul");
+        break;      
+       case Verde:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Verde");
+        break;
+       case Blanco:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Blanco");
+        break;
+       case Negro:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Negro");
+        break;
+       case Amarillo:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Amarillo");
+        break;
+       case Naranja:
+        lcd.setCursor(0,1);
+        lcd.print("Gama: Naranja");
+        break;
+        default:
+         lcd.setCursor(0,1);
+         lcd.print("Gama: Error");
+         break;
+      
+    }
     Serial.println();
     delay(2000);
     state = lect_raw;
